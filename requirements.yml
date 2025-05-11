@@ -1,0 +1,6 @@
+roles:
+  - src: kyl191.openvpn
+    version: v3.0.2
+collections:
+  - ansible.posix
+  - community.general

@@ -1,0 +1,40 @@
+---
+- name: Configure VPN server
+  gather_facts: true
+  hosts: all
+  become: true
+  roles:
+    - role: kyl191.openvpn
+      openvpn_sync_certs: true
+      openvpn_clients:
+        - "jordan_phone"
+        - "cassie_phone"
+        - "danielle_phone"
+        - "danielle_tv"
+        - "jordan_cassie_tv"
+      openvpn_server_ipv6_network: "{{ undef() }}"
+      openvpn_redirect_gateway: ""
+
+- name: Copy ovpn files
+  hosts: all
+  become: true
+  tasks:
+    - name: Find all client files
+      ansible.builtin.find:
+        paths: /etc/openvpn/server
+        patterns: "*.ovpn"
+      register: openvpn_client_files
+
+    - name: Make folder for client files on controller
+      ansible.builtin.file:
+        path: ./openvpn_client_files
+        state: directory
+      delegate_to: localhost
+
+    - name: Transfer all client files to controller
+      become: true
+      ansible.builtin.fetch:
+        src: "{{ item.path }}"
+        dest: ./openvpn_client_files/
+        flat: true
+      loop: "{{ openvpn_client_files.files }}"
