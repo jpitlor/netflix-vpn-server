@@ -6,6 +6,9 @@
   roles:
     - role: kyl191.openvpn
       openvpn_sync_certs: true
+      openvpn_client_register_dns: false
+      openvpn_set_dns: false
+      openvpn_server_hostname: pitlor.tplinkdns.com
       openvpn_clients:
         - "jordan_phone"
         - "cassie_phone"
@@ -13,7 +16,8 @@
         - "danielle_tv"
         - "jordan_cassie_tv"
       openvpn_server_ipv6_network: "{{ undef() }}"
-      openvpn_redirect_gateway: ""
+      openvpn_push:
+        - "route 192.168.68.0 255.255.252.0"
 
 - name: Copy ovpn files
   hosts: all
@@ -25,11 +29,11 @@
         patterns: "*.ovpn"
       register: openvpn_client_files
 
-    - name: Make folder for client files on controller
-      ansible.builtin.file:
-        path: ./openvpn_client_files
-        state: directory
-      delegate_to: localhost
+    # - name: Make folder for client files on controller
+    #   ansible.builtin.file:
+    #     path: ./openvpn_client_files
+    #     state: directory
+    #   delegate_to: localhost
 
     - name: Transfer all client files to controller
       become: true
