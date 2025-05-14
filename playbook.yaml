@@ -7,7 +7,6 @@
     - role: kyl191.openvpn
       openvpn_sync_certs: true
       openvpn_client_register_dns: false
-      openvpn_set_dns: false
       openvpn_server_hostname: pitlor.tplinkdns.com
       openvpn_clients:
         - "jordan_phone"
@@ -18,6 +17,8 @@
       openvpn_server_ipv6_network: "{{ undef() }}"
       openvpn_push:
         - "route 192.168.68.0 255.255.252.0"
+      openvpn_masquerade_not_snat: true
+      openvpn_firewall: iptables
 
 - name: Copy ovpn files
   hosts: all
